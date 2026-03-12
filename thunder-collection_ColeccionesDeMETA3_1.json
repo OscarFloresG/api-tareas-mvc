@@ -1,0 +1,37 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "ColeccionesDeMETA3_1",
+    "collectionId": "1f14b558-f9f2-4484-bfe4-73395bfa0e5a",
+    "dateExported": "2026-03-12T19:27:57.677Z",
+    "version": "1.4",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "413d23b4-dcec-4d3d-9b1b-21030ede5ea6",
+            "colId": "1f14b558-f9f2-4484-bfe4-73395bfa0e5a",
+            "containerId": "",
+            "name": "http://localhost:3000/api/tareas",
+            "url": "http://localhost:3000/api/tareas/buscar?q=gym",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2026-03-12T19:27:48.182Z",
+            "modified": "2026-03-12T19:27:48.182Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "q",
+                    "value": "gym",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{\"titulo\": \"IR AL GYM\", \"completada\": false}"
+                ],
+                "form": []
+            }
+        }
+    ],
+    "ref": "K7cVcEjwTZ7aFgAuuG14N_Gl7iqTmzinDySrUFAX2wUZ5GmfKksMDMN9cC0yZeQIRknXrWTlGKUAt07V-y-_3g"
+}

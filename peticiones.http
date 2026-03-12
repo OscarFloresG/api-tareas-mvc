@@ -1,0 +1,37 @@
+### 1. Obtener todas las tareas
+GET http://localhost:3000/api/tareas
+
+### 2. Obtener todas en formato TEXTO (Actividad 4)
+GET http://localhost:3000/api/tareas?formato=text
+
+### 3. Buscar una tarea (Actividad 3)
+GET http://localhost:3000/api/tareas/buscar?q=Express
+
+### 4. Crear una nueva tarea
+POST http://localhost:3000/api/tareas
+Content-Type: application/json
+
+{
+    "titulo": "Tarea creada desde archivo HTTP",
+    "completada": false
+}
+
+### 5. Actualizar completamente (PUT)
+PUT http://localhost:3000/api/tareas/1
+Content-Type: application/json
+
+{
+    "titulo": "Aprender Express Avanzado",
+    "completada": true
+}
+
+### 6. Eliminar una tarea
+DELETE http://localhost:3000/api/tareas/3
+
+### 7. Actualizar parcialmente (PATCH)
+PATCH http://localhost:3000/api/tareas/1
+Content-Type: application/json
+
+{
+    "completada": true
+}
