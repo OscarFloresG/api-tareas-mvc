@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-const verificarToken = (req, res, next) => {
+export const verificarToken = (req, res, next) => {
   // 1. Extraer el JWT de la cookie
   const tokenJWT = req.cookies.jwt_token;
   // 2. Extraer el CSRF del header
@@ -26,4 +26,4 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-module.exports = { verificarToken };
+export default { verificarToken };

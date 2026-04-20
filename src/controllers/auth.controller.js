@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 // Simulacion de un usuario en la base de datos
 const USUARIO_DB = {
@@ -7,7 +7,7 @@ const USUARIO_DB = {
   password: '123' 
 };
 
-exports.login = (req, res) => {
+export const login = (req, res) => {
   const { email, password } = req.body;
 
   // 1. Validar credenciales
@@ -40,7 +40,7 @@ exports.login = (req, res) => {
   });
 };
 
-exports.logout = (req, res) => {
+export const logout = (req, res) => {
   res.clearCookie('jwt_token');
   res.json({ success: true, message: 'Sesión cerrada' });
 };

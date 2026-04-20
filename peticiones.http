@@ -35,3 +35,78 @@ Content-Type: application/json
 {
     "completada": true
 }
+
+
+### 1. LOGIN
+# @name login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@ejemplo.com",
+  "password": "123"
+}
+
+### Guardar el token de la respuesta anterior en una variable manual
+@token = {{login.response.body.csrfToken}}
+
+### 2. OBTENER TAREAS (Prueba de Auth y Relaciones)
+GET http://localhost:3000/api/tareas
+x-csrf-token: {{token}}
+
+### 3. VINCULAR UN NUEVO TAG A UNA TAREA (Prueba de tabla intermedia)
+POST http://localhost:3000/api/tareas/1/tags
+Content-Type: application/json
+x-csrf-token: {{token}}
+
+{
+  "tagId": 3
+}
+
+
+### --- BLOQUE 1: RELACIONES INDIRECTAS (EL RETO) ---
+
+### 1. Personas por Tag (¿Quiénes tienen tareas 'Urgentes'?)
+# Esta prueba valida que puedes cruzar desde Tag hasta Persona pasando por Tarea
+GET http://localhost:3000/api/tags/1/personas
+x-csrf-token: {{token}}
+
+
+### 2. Tags por Persona (¿Qué etiquetas usa el Usuario 1?)
+# Esta prueba valida que puedes ver los tags de todas las tareas de una persona
+GET http://localhost:3000/api/personas/1/tags
+x-csrf-token: {{token}}
+
+
+### --- BLOQUE 2: VALIDACIONES Y MANEJO DE ERRORES (PUNTOS DE RÚBRICA) ---
+
+### 3. Error 404: Buscar un recurso que no existe
+# Debería devolver success: false y un mensaje claro
+GET http://localhost:3000/api/tareas/999999
+x-csrf-token: {{token}}
+
+
+### 4. Error 400: Crear tarea sin datos obligatorios
+# Debería devolver error 400 porque el título es requerido
+POST http://localhost:3000/api/tareas
+Content-Type: application/json
+x-csrf-token: {{token}}
+
+{
+  "completada": false
+}
+
+
+### 5. Búsqueda de Tareas por Término (Query Strings)
+# Valida el endpoint de búsqueda implementado en tu controlador
+GET http://localhost:3000/api/tareas/buscar?q=Aprender
+x-csrf-token: {{token}}
+
+
+### --- BLOQUE 3: INTEGRIDAD REFERENCIAL (BORRADO) ---
+
+### 6. Borrar una tarea con tags vinculados
+# Verifica que se borre la tarea y la relación en la tabla intermedia (tareatags) 
+# sin romper la base de datos
+DELETE http://localhost:3000/api/tareas/1
+x-csrf-token: {{token}}
