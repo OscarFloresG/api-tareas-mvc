@@ -64,30 +64,24 @@ x-csrf-token: {{token}}
 }
 
 
-### --- BLOQUE 1: RELACIONES INDIRECTAS (EL RETO) ---
 
-### 1. Personas por Tag (¿Quiénes tienen tareas 'Urgentes'?)
-# Esta prueba valida que puedes cruzar desde Tag hasta Persona pasando por Tarea
+### 1. Personas por Tag
 GET http://localhost:3000/api/tags/1/personas
 x-csrf-token: {{token}}
 
 
-### 2. Tags por Persona (¿Qué etiquetas usa el Usuario 1?)
-# Esta prueba valida que puedes ver los tags de todas las tareas de una persona
+### 2. Tags por Persona 
 GET http://localhost:3000/api/personas/1/tags
 x-csrf-token: {{token}}
 
 
-### --- BLOQUE 2: VALIDACIONES Y MANEJO DE ERRORES (PUNTOS DE RÚBRICA) ---
 
 ### 3. Error 404: Buscar un recurso que no existe
-# Debería devolver success: false y un mensaje claro
 GET http://localhost:3000/api/tareas/999999
 x-csrf-token: {{token}}
 
 
 ### 4. Error 400: Crear tarea sin datos obligatorios
-# Debería devolver error 400 porque el título es requerido
 POST http://localhost:3000/api/tareas
 Content-Type: application/json
 x-csrf-token: {{token}}
@@ -98,15 +92,66 @@ x-csrf-token: {{token}}
 
 
 ### 5. Búsqueda de Tareas por Término (Query Strings)
-# Valida el endpoint de búsqueda implementado en tu controlador
 GET http://localhost:3000/api/tareas/buscar?q=Aprender
 x-csrf-token: {{token}}
 
 
-### --- BLOQUE 3: INTEGRIDAD REFERENCIAL (BORRADO) ---
 
 ### 6. Borrar una tarea con tags vinculados
-# Verifica que se borre la tarea y la relación en la tabla intermedia (tareatags) 
-# sin romper la base de datos
+
 DELETE http://localhost:3000/api/tareas/1
 x-csrf-token: {{token}}
+
+
+
+
+
+### 1. Crear una nueva Persona (Registro)
+POST http://localhost:3000/api/personas
+Content-Type: application/json
+
+{
+  "nombre": "Cimarrón UABC",
+  "email": "cimarron@uabc.edu.mx"
+}
+
+### 2. Obtener todas las Personas
+GET http://localhost:3000/api/personas
+
+### 3. Modificar datos de una Persona (ID: 1)
+PUT http://localhost:3000/api/personas/1
+Content-Type: application/json
+
+{
+  "nombre": "Cimarrón Actualizado"
+}
+
+### 4. Eliminación Lógica (Activar/Desactivar)
+PATCH http://localhost:3000/api/personas/1/estado
+
+
+
+### 5. Consultar Tareas de una Persona
+GET http://localhost:3000/api/personas/1/tareas
+
+### 6. Consultar Tags de una Persona (Relación Indirecta)
+GET http://localhost:3000/api/personas/1/tags
+
+
+
+
+### 7. Login con Google (Simulado)
+# Dará 401/403 porque el token no es real
+POST http://localhost:3000/api/auth/google
+Content-Type: application/json
+
+{
+  "googleToken": "token_de_prueba_123"
+}
+
+### 8. Logout
+POST http://localhost:3000/api/auth/logout
+
+
+### 9. Eliminación Física
+DELETE http://localhost:3000/api/personas/1

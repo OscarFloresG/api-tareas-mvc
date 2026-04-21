@@ -5,37 +5,37 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { verificarToken } from './middleware/auth.js'; // IMPORTANTE: Agregar .js
-import * as authController from './controllers/auth.controller.js';
+// Middlewares
+import { verificarToken } from './middleware/auth.js';
+
+// Rutas
+import authRoutes from './routes/auth.routes.js';
 import tareaRoutes from './routes/tarea.routes.js';
 import personaRoutes from './routes/persona.routes.js';
-import tagRoutes from './routes/tag.routes.js';        // Nueva ruta
+import tagRoutes from './routes/tag.routes.js';
 
 const app = express();
 
-// --- Configuración de Middlewares globales ---
+// --- Middlewares Globales ---
 app.use(express.json());
 app.use(cookieParser()); 
 
-// Configuración de CORS (Importante: puerto 3001 para tu Vue)
+// Configuración de CORS
 app.use(cors({
   origin: 'http://localhost:3001', 
   credentials: true
 }));
 
-// --- Rutas Públicas (Auth) ---
-app.post('/api/auth/login', authController.login);
-app.post('/api/auth/logout', authController.logout);
 
-// --- Rutas Protegidas (Requieren verificarToken) ---
+app.use('/api/auth', authRoutes);
 
 // Gestión de Tareas (CRUD y relación con Tags)
 app.use('/api/tareas', verificarToken, tareaRoutes);
 
-// Gestión de Personas (CRUD y tareas por persona)
+// Gestión de Usuarios/Personas (CRUD, Activación, Modificación)
 app.use('/api/personas', verificarToken, personaRoutes);
 
-// Gestión de Tags (CRUD y tareas por tag)
+// Gestión de Tags (CRUD y relaciones indirectas)
 app.use('/api/tags', verificarToken, tagRoutes);
 
 // --- Manejo de errores 404 ---
@@ -43,6 +43,15 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: 'Ruta no encontrada'
+  });
+});
+
+// Middleware de error global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Error interno del servidor'
   });
 });
 

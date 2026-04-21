@@ -1,6 +1,4 @@
-/**
- * Rutas de Tags
- */
+
 import express from 'express';
 import * as tagController from '../controllers/tag.controller.js';
 const router = express.Router();

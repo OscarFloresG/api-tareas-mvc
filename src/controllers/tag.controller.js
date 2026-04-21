@@ -1,6 +1,6 @@
 import db from '../../models/index.js';
 const { Tarea, Tag, Persona } = db;
-// Obtener todos los tags
+
 export const obtenerTodos = async (req, res) => {
     try {
         const tags = await Tag.findAll();
@@ -10,14 +10,13 @@ export const obtenerTodos = async (req, res) => {
     }
 };
 
-// Actividad: Todas las Tareas asociadas a un Tag
 export const obtenerTareasPorTag = async (req, res) => {
     try {
         const tagConTareas = await Tag.findByPk(req.params.id, {
             include: [{
                 model: Tarea,
                 as: 'tareas',
-                through: { attributes: [] } // Oculta la tabla intermedia en la respuesta
+                through: { attributes: [] } 
             }]
         });
         if (!tagConTareas) return res.status(404).json({ message: "Tag no encontrado" });
@@ -27,7 +26,6 @@ export const obtenerTareasPorTag = async (req, res) => {
     }
 };
 
-// Actividad: RELACIÓN INDIRECTA (Personas relacionadas con un Tag)
 export const obtenerPersonasPorTag = async (req, res) => {
     try {
         const personas = await Tag.findByPk(req.params.id, {

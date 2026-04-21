@@ -1,0 +1,266 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Tareas - Sistema MVC UABC
+  description: |
+    Documentación técnica completa para el proyecto de Gestión de Tareas.
+    Cumple con los requisitos de la rúbrica:
+    - Autenticación con Google (OAuth2).
+    - Eliminación Lógica (Activación/Desactivación de usuarios).
+    - Relaciones Muchos a Muchos (N:N) entre Tareas y Tags.
+    - Consultas Indirectas (Relación cruzada Personas/Tags).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor Local de Desarrollo
+
+tags:
+  - name: Autenticación
+    description: Gestión de sesiones y Google Auth.
+  - name: Personas
+    description: Operaciones sobre usuarios (Cimarrones).
+  - name: Tareas
+    description: CRUD de actividades y sus etiquetas.
+  - name: Tags
+    description: Categorías y etiquetas del sistema.
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: jwt_token
+
+  schemas:
+    Persona:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: "Cimarrón UABC"
+        email:
+          type: string
+          example: "usuario@uabc.edu.mx"
+        activo:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+
+    Tarea:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        titulo:
+          type: string
+          example: "Entregar Proyecto Final"
+        completada:
+          type: boolean
+          example: false
+        personaId:
+          type: integer
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        nombre:
+          type: string
+          example: "Urgente"
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+
+paths:
+  # --- AUTENTICACIÓN ---
+  /auth/google:
+    post:
+      tags:
+        - Autenticación
+      summary: Login o Registro automático con Google
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                googleToken:
+                  type: string
+      responses:
+        '200':
+          description: Login exitoso.
+        '403':
+          description: Usuario desactivado o dominio no institucional.
+
+  /auth/logout:
+    post:
+      tags:
+        - Autenticación
+      summary: Cerrar sesión
+      responses:
+        '200':
+          description: Sesión cerrada y cookie eliminada.
+
+  # --- PERSONAS ---
+  /personas:
+    get:
+      tags:
+        - Personas
+      summary: Listar todas las personas
+      responses:
+        '200':
+          description: Lista de usuarios.
+    post:
+      tags:
+        - Personas
+      summary: Crear persona manualmente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Persona'
+      responses:
+        '201':
+          description: Creado con éxito.
+
+  /personas/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    put:
+      tags:
+        - Personas
+      summary: Modificar datos de usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Persona'
+      responses:
+        '200':
+          description: Actualizado.
+    delete:
+      tags:
+        - Personas
+      summary: Eliminación física de usuario
+      responses:
+        '200':
+          description: Borrado de la base de datos.
+
+  /personas/{id}/estado:
+    patch:
+      tags:
+        - Personas
+      summary: Activación/Desactivación (Eliminación Lógica)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Estado 'activo' invertido exitosamente.
+
+  # --- TAREAS ---
+  /tareas:
+    get:
+      tags:
+        - Tareas
+      summary: Listar tareas con sus tags (N:N)
+      responses:
+        '200':
+          description: Lista de tareas incluyendo el arreglo de tags.
+    post:
+      tags:
+        - Tareas
+      summary: Crear tarea y vincular tags
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titulo:
+                  type: string
+                personaId:
+                  type: integer
+                tagIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '201':
+          description: Tarea creada y tags vinculados.
+
+  # --- RELACIONES INDIRECTAS ---
+  /personas/{id}/tags:
+    get:
+      tags:
+        - Personas
+      summary: Consulta Indirecta - Tags de una Persona
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de tags asociados vía tareas.
+
+  /tags/{id}/personas:
+    get:
+      tags:
+        - Tags
+      summary: Consulta Indirecta - Personas por Tag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de personas que usan este tag en sus tareas.
+
+  # --- TAGS ---
+  /tags:
+    get:
+      tags:
+        - Tags
+      summary: Listar tags
+    post:
+      tags:
+        - Tags
+      summary: Crear nuevo tag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string

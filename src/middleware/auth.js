@@ -11,10 +11,10 @@ export const verificarToken = (req, res, next) => {
   }
 
   try {
-    // 3. Verificar que el JWT sea original y no haya expirado
+    // verificar que el JWT sea original y no haya expirado
     const decoded = jwt.verify(tokenJWT, process.env.JWT_SECRET);
     
-    // 4. Validar "Doble Token": El CSRF del header debe ser igual al del JWT
+    // validar "Doble Token": El CSRF del header debe ser igual al del JWT
     if (decoded.csrfToken !== csrfTokenHeader) {
       return res.status(401).json({ success: false, message: 'Ataque CSRF detectado' });
     }

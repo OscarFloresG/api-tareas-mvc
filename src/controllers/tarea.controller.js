@@ -2,7 +2,6 @@ import db from '../../models/index.js';
 const { Tarea, Tag, Persona } = db;
 import { Op } from 'sequelize';
 
-// GET /api/tareas
 export const obtenerTodas = async (req, res) => {
   try {
     const tareas = await Tarea.findAll({
@@ -28,7 +27,6 @@ export const obtenerTodas = async (req, res) => {
   }
 };
 
-// NUEVA: GET /api/tareas/:id (Faltaba esta)
 export const obtenerPorId = async (req, res) => {
   try {
     const tarea = await Tarea.findByPk(req.params.id, {
@@ -44,7 +42,6 @@ export const obtenerPorId = async (req, res) => {
   }
 };
 
-// POST /api/tareas
 export const crear = async (req, res) => {
   try {
     const { titulo, completada, personaId } = req.body;
@@ -57,7 +54,6 @@ export const crear = async (req, res) => {
   }
 };
 
-// NUEVA: PUT /api/tareas/:id (Faltaba esta)
 export const actualizarCompleta = async (req, res) => {
   try {
     const { titulo, completada, personaId } = req.body;
@@ -72,7 +68,6 @@ export const actualizarCompleta = async (req, res) => {
   }
 };
 
-// PATCH /api/tareas/:id
 export const actualizarParcial = async (req, res) => {
   try {
     const id = req.params.id;
@@ -85,7 +80,6 @@ export const actualizarParcial = async (req, res) => {
   }
 };
 
-// DELETE /api/tareas/:id
 export const eliminar = async (req, res) => {
   try {
     const id = req.params.id;
@@ -97,7 +91,6 @@ export const eliminar = async (req, res) => {
   }
 };
 
-// POST /api/tareas/:id/tags
 export const relacionarTag = async (req, res) => {
   try {
     const { id } = req.params;
@@ -111,7 +104,6 @@ export const relacionarTag = async (req, res) => {
   }
 };
 
-// GET /api/tareas/buscar
 export const buscar = async (req, res) => {
   try {
     const termino = req.query.q;
