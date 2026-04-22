@@ -155,3 +155,14 @@ POST http://localhost:3000/api/auth/logout
 
 ### 9. Eliminación Física
 DELETE http://localhost:3000/api/personas/1
+
+
+### Crear una nueva tarea básica
+POST http://localhost:3000/api/tareas
+Content-Type: application/json
+
+{
+    "titulo": "Estudiar para el examen de MVC",
+    "personaId": 2,
+    "completada": false
+}

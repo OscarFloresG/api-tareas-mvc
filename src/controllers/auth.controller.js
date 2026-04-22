@@ -70,3 +70,54 @@ export const logout = (req, res) => {
     res.clearCookie('jwt_token');
     res.json({ success: true, message: 'Sesión cerrada' });
 };
+
+
+
+// FUNCION  TRAMPA 
+export const loginSimulado = async (req, res) => {
+    try {
+        // SIMULAMOS los datos de Google
+        const fakePayload = {
+            googleId: "123456789_SIMULADO",
+            email: "tu.correo.uabc@uabc.edu.mx", 
+            name: "Usuario de Prueba"
+        };
+
+        let usuario = await Persona.findOne({ where: { email: fakePayload.email } });
+
+        if (!usuario) {
+            usuario = await Persona.create({
+                nombre: fakePayload.name,
+                email: fakePayload.email,
+                googleId: fakePayload.googleId,
+                activo: true
+            });
+        }
+
+        // GENERAS EL JWT 
+        const csrfToken = crypto.randomBytes(32).toString('hex');
+        const tokenJWT = jwt.sign(
+            { id: usuario.id, email: usuario.email, csrfToken }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '24h' }
+        );
+
+        // MANDAS LA COOKIE
+        res.cookie('jwt_token', tokenJWT, {
+            httpOnly: true,
+            secure: false, 
+            sameSite: 'strict',
+            maxAge: 86400000 
+        });
+
+        res.json({ 
+            success: true, 
+            message: "cookie simulada enviada",
+            usuario: { id: usuario.id, nombre: usuario.nombre }
+        });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
