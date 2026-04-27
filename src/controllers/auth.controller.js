@@ -33,7 +33,6 @@ export const googleCallback = async (req, res) => {
         });
         const { sub: googleId, email, name } = ticket.getPayload();
 
-        // 2. Punto 2 de la rúbrica: Tabla de usuarios (Buscar o Crear)
         let usuario = await Persona.findOne({ where: { email } });
 
         if (!usuario) {
@@ -46,7 +45,7 @@ export const googleCallback = async (req, res) => {
             });
         } 
         
-        // Verificación de estado (Eliminación lógica)
+        // Verificación de estado 
         if (!usuario.activo) {
             return res.status(403).json({ 
                 success: false, 
@@ -62,11 +61,11 @@ export const googleCallback = async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        // 4. Envío de Cookie Segura (Punto 1 de rúbrica: TLS/Secure)
+        // 4. Envío de Cookie Segura 
         res.cookie('jwt_token', tokenJWT, {
             httpOnly: true,
-            secure: true, // Siempre true porque ya implementaste TLS/SSL
-            sameSite: 'none', // Cambiado a 'none' si tu frontend está en otro puerto (ej: 3001)
+            secure: true, 
+            sameSite: 'none', 
             maxAge: 86400000 
         });
 
@@ -88,7 +87,7 @@ export const logout = (req, res) => {
     res.json({ success: true, message: 'Sesión cerrada' });
 };
 
-// FUNCIÓN TRAMPA (Mantenla solo para pruebas locales)
+// FUNCIÓN TRAMPA PARA SIMULAR LOGIN SIN GOOGLE (USO PARA PRUEBAS)
 export const loginSimulado = async (req, res) => {
     try {
         const fakePayload = {
@@ -113,7 +112,7 @@ export const loginSimulado = async (req, res) => {
 
         res.cookie('jwt_token', tokenJWT, {
             httpOnly: true,
-            secure: true, // Cambiado a true por tu SSL
+            secure: true, 
             sameSite: 'none',
             maxAge: 86400000 
         });
